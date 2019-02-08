@@ -6,26 +6,23 @@ def loglog_lims_with_axis_equal(axes, xlim, ylim):
     This is needed because the combination of loglog, axis("equal"), and xlim
     does not work correctly with pyplot.
     """
-    assert(len(xlim) == 2)
+    for lim, set_scale, set_lim in zip(
+            (xlim, ylim), 
+            (axes.set_xscale, axes.set_yscale),
+            (axes.set_xlim, axes.set_ylim)):
     
-    assert(len(ylim) == 2)
+        assert(len(lim) == 2)
     
-    axes.set_xscale("log")
+        set_scale("log")
     
-    axes.set_yscale("log")
+        set_lim(lim)
     
-    axes.set_xlim(xlim)
+    scales = []
     
-    axes.set_ylim(ylim)
+    for log in (math.log, math.log10):
     
-    log = math.log
+        scales.append((log(ylim[1]) - log(ylim[0]))/  \
+            (log(xlim[1]) - log(xlim[0])))
     
-    log_scale = (log(ylim[1]) - log(ylim[0]))/(log(xlim[1]) - log(xlim[0]))
-    
-    log10 = math.log10
-    
-    power_scale = (log10(ylim[1]) - log10(ylim[0]))/  \
-        (log10(xlim[1]) - log10(xlim[0]))
-    
-    axes.set_aspect(log_scale/power_scale)
+    axes.set_aspect(scales[0]/scales[1])
     
